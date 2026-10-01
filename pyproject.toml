@@ -5,9 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "modhub-sample-failed-strategy"
 version = "0.1.0"
-description = "FastAPI service pinned to Pydantic v1 by a dependency that never supported v2."
+description = "FastAPI service whose stored-customer schema comes from a library that only supports Pydantic v1."
 requires-python = ">=3.10"
-dependencies = ["fastapi==0.99.1", "pydantic>=1.10,<2", "httpx<0.28"]
+dependencies = ["fastapi==0.110.3", "pydantic-sqlalchemy==0.0.10", "sqlalchemy>=1.4", "httpx<0.28"]
 
 [tool.setuptools]
 packages = ["src"]

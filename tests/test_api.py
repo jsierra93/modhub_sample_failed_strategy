@@ -1,9 +1,7 @@
 """HTTP-level tests.
 
-These are what make the Pydantic pin load-bearing rather than incidental:
-FastAPI 0.99 derives request validation and the OpenAPI schema from the
-same models, so the framework has to agree with them about which major
-version of Pydantic is in play.
+FastAPI derives request validation and the OpenAPI schema from the same
+models, and the stored-customer schema comes from pydantic-sqlalchemy.
 """
 
 from __future__ import annotations
@@ -68,3 +66,16 @@ def test_openapi_schema_is_generated_from_the_models():
     schema = client.get("/openapi.json").json()
 
     assert "Customer" in schema["components"]["schemas"]
+
+
+def test_stored_customer_schema_is_generated_from_the_orm_model():
+    schema = client.get("/openapi.json").json()
+
+    assert "CustomerRecord" in schema["components"]["schemas"]
+
+
+def test_example_record_is_served_through_the_generated_schema():
+    response = client.get("/records/example")
+
+    assert response.status_code == 200
+    assert response.json()["email"] == "ada@example.com"

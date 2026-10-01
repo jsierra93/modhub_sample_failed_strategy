@@ -1,8 +1,8 @@
 """HTTP surface for the customer models.
 
-FastAPI 0.99 reads the Pydantic models directly to build request
-validation and the OpenAPI schema, so the framework and the models are
-pinned to the same major version of Pydantic.
+FastAPI reads the Pydantic models directly to build request validation and
+the OpenAPI schema. The stored-customer schema is generated from the
+SQLAlchemy model by pydantic-sqlalchemy, which only supports Pydantic v1.
 """
 
 from __future__ import annotations
@@ -11,6 +11,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import ValidationError
 
 from src.models import Customer, customer_to_dict
+from src.records import CustomerRecord, StoredCustomer, stored_customer_from_record
 
 app = FastAPI(title="Customer API", version="0.1.0")
 
@@ -38,3 +39,9 @@ def validate_customer(payload: dict) -> dict:
     except ValidationError as exc:
         return {"valid": False, "error_count": len(exc.errors())}
     return {"valid": True, "error_count": 0}
+
+
+@app.get("/records/example", response_model=StoredCustomer)
+def example_record() -> dict:
+    record = CustomerRecord(id=1, name="Ada Lovelace", email="ada@example.com", age=36)
+    return stored_customer_from_record(record)
